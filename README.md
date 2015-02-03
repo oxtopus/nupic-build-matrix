@@ -2,7 +2,7 @@ Docker Build Matrices
 =====================
 
 Herein contains a collection of platform-specific Dockerfiles useful for
-building nupic, and nupic.core from source in a variety of specific linux
+building nupic and nupic.core from source in a variety of specific linux
 environments.
 
 There is an included CoreOS and Vagrant configuration for running these builds
@@ -16,7 +16,10 @@ use-case for a project like this is in a continuous integration environment
 that regularly fetches a remote nupic repository, resets to a specific version
 and then builds that version in one or more platform-specific docker
 containers.  As such, clone nupic at the root of this project, and optionally
-reset to a specific commit sha -- otherwise master is used.
+reset to a specific commit sha -- otherwise master is used.  Because of a
+specific requirement by Docker related to paths, you will need to do a separate
+shallow clone (instructions follow) from this location into the
+platform-specific target directory.
 
 Usage
 -----
@@ -31,7 +34,7 @@ Once logged in, the $TARGET below can be any one of the directories in this
 repository that contains a Dockerfile:
 
     cd nupic-build-matrix
-    git clone --depth=1 file:////home/core/nupic-build-matrix/nupic/ $TARGET
+    git clone --depth=1 file:////home/core/nupic-build-matrix/nupic/ $TARGET/nupic
     cd $TARGET
     docker build -t nupic:`git rev-parse HEAD` .
 
@@ -40,5 +43,5 @@ Supported platforms
 
 - [x] Ubuntu 14.04 + gcc
 - [x] Ubuntu 14.04 + clang
-- [ ] CentOS 6.5 + gcc
+- [ ] CentOS 6 + gcc
 - ???

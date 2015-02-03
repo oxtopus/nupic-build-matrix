@@ -9,6 +9,7 @@ RUN apt-get install -y \
     git-core \
     clang \
     cmake \
+    python \
     python2.7 \
     python2.7-dev \
     zlib1g-dev \
