@@ -10,13 +10,12 @@ RUN yum install -y \
     devtoolset-2-gcc-c++ \
     libjpeg-turbo-devel \
     libX11-devel libXt-devel \
-    cmake28 \
+    cmake \
     wget \
     libyaml \
     libyaml-devel \
     bzip2-devel \
     zlib-devel \
-    openssl-devel \
     sudo \
     tar \
     xz \
@@ -65,8 +64,6 @@ RUN git clone `head -n 2 $NUPIC/.nupic_modules | tail -n 1 | sed -r "s/NUPIC_COR
 
 # Install Python dependencies
 RUN pip install --allow-all-external --allow-unverified PIL --allow-unverified  psutil -r $NUPIC/external/common/requirements.txt
-
-RUN yum install -y cmake
 
 # Build nupic.core
 RUN cd nupic.core && \

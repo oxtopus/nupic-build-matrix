@@ -43,5 +43,6 @@ Supported platforms
 
 - [x] Ubuntu 14.04 + gcc
 - [x] Ubuntu 14.04 + clang
-- [ ] CentOS 6 + gcc
+- [x] CentOS 6 + gcc
+- [x] CentOS 7 + gcc
 - ???
