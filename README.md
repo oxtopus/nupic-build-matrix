@@ -45,4 +45,5 @@ Supported platforms
 - [x] Ubuntu 14.04 + clang
 - [x] CentOS 6 + gcc
 - [x] CentOS 7 + gcc
+- [x] Debian Jessie + clang
 - ???
