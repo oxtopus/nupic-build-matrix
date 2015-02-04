@@ -16,6 +16,7 @@ RUN yum install -y \
     libyaml-devel \
     bzip2-devel \
     zlib-devel \
+    openssl-devel \
     sudo \
     tar \
     xz \
@@ -44,6 +45,7 @@ RUN ln -s /usr/local/bin/python2.7 /usr/local/bin/python
 RUN wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
 RUN /usr/local/bin/python2.7 ez_setup.py
 RUN /usr/local/bin/easy_install-2.7 pip
+RUN pip install wheel
 
 # Set enviroment variables needed by NuPIC
 ENV NUPIC /usr/local/src/nupic
@@ -73,9 +75,6 @@ RUN cd nupic.core && \
     make install
 
 WORKDIR /usr/local/src/nupic
-
-# Install NuPIC with using SetupTools
-RUN python setup.py install --nupic-core-dir=/usr/local
 
 # Build release packages
 RUN python setup.py sdist bdist bdist_wheel

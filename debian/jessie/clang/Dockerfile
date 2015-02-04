@@ -7,8 +7,7 @@ RUN apt-get update
 RUN apt-get install -y \
     wget \
     git-core \
-    gcc \
-    g++ \
+    clang \
     cmake \
     python \
     python2.7 \
@@ -51,9 +50,6 @@ RUN cd nupic.core && \
     make install
 
 WORKDIR /usr/local/src/nupic
-
-# Install NuPIC with using SetupTools
-RUN python setup.py install --nupic-core-dir=/usr/local
 
 # Build release packages
 RUN python setup.py sdist bdist bdist_wheel

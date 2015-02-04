@@ -52,9 +52,6 @@ RUN cd nupic.core && \
 
 WORKDIR /usr/local/src/nupic
 
-# Install NuPIC with using SetupTools
-RUN python setup.py install --nupic-core-dir=/usr/local
-
 # Build release packages
 RUN python setup.py sdist bdist bdist_wheel
 
