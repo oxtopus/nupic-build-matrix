@@ -36,7 +36,7 @@ repository that contains a Dockerfile:
     cd nupic-build-matrix
     git clone --depth=1 file:////home/core/nupic-build-matrix/nupic/ $TARGET/nupic
     cd $TARGET
-    docker build -t nupic:`git rev-parse HEAD` .
+    docker build -t nupic:`(cd nupic && git rev-parse HEAD)`-$PLATFORM .
 
 Supported platforms
 -------------------
