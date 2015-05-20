@@ -5,7 +5,7 @@ set -o errexit
 function build {
   git clone --depth=1 $1 $2/nupic
   pushd $2
-  docker build -t nupic:`(cd nupic && git rev-parse HEAD)`-$3 .
+  docker build --no-cache -t nupic:`(cd nupic && git rev-parse HEAD)`-$3 .
   rm -rf nupic
   popd
 }
