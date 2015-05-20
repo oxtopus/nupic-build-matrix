@@ -1,20 +1,29 @@
+# Size of the CoreOS cluster created by Vagrant
+$num_instances=1
+
+# Used to fetch a new discovery token for a cluster of size $num_instances
+$new_discovery_url="https://discovery.etcd.io/new?size=#{$num_instances}"
 
 # To automatically replace the discovery token on 'vagrant up', uncomment
 # the lines below:
 #
-#if File.exists?('user-data') && ARGV[0].eql?('up')
-#  require 'open-uri'
-#  require 'yaml'
-#
-#  token = open('https://discovery.etcd.io/new').read
-#
-#  data = YAML.load(IO.readlines('user-data')[1..-1].join)
-#  data['coreos']['etcd']['discovery'] = token
-#
-#  yaml = YAML.dump(data)
-#  File.open('user-data', 'w') { |file| file.write("#cloud-config\n\n#{yaml}") }
-#end
-#
+if File.exists?('user-data') && ARGV[0].eql?('up')
+  require 'open-uri'
+  require 'yaml'
+
+  token = open($new_discovery_url).read
+
+  data = YAML.load(IO.readlines('user-data')[1..-1].join)
+  if data['coreos'].key? 'etcd'
+    data['coreos']['etcd']['discovery'] = token
+  end
+  if data['coreos'].key? 'etcd2'
+    data['coreos']['etcd2']['discovery'] = token
+  end
+
+  yaml = YAML.dump(data)
+  File.open('user-data', 'w') { |file| file.write("#cloud-config\n\n#{yaml}") }
+end
 
 #
 # coreos-vagrant is configured through a series of configuration
@@ -23,8 +32,10 @@
 # uncomment the necessary lines, leaving the $, and replace everything
 # after the equals sign..
 
-# Size of the CoreOS cluster created by Vagrant
-$num_instances=1
+# Change basename of the VM
+# The default value is "core", which results in VMs named starting with
+# "core-01" through to "core-${num_instances}".
+#$instance_name_prefix="core"
 
 # Official CoreOS channel from which updates should be downloaded
 $update_channel='alpha'
@@ -40,9 +51,24 @@ $update_channel='alpha'
 # If 2375 is used, Vagrant will auto-increment (e.g. in the case of $num_instances > 1)
 # You can then use the docker tool locally by setting the following env var:
 #   export DOCKER_HOST='tcp://127.0.0.1:2375'
-#$expose_docker_tcp=2375
+$expose_docker_tcp=2375
 
-# Setting for VirtualBox VMs
-#$vb_gui = false
-#$vb_memory = 1024
-#$vb_cpus = 1
+# Enable NFS sharing of your home directory ($HOME) to CoreOS
+# It will be mounted at the same path in the VM as on the host.
+# Example: /Users/foobar -> /Users/foobar
+#$share_home=false
+
+# Customize VMs
+#$vm_gui = false
+$vm_memory = 4096
+$vm_cpus = 4
+
+# Share additional folders to the CoreOS VMs
+# For example,
+# $shared_folders = {'/path/on/host' => '/path/on/guest', '/home/foo/app' => '/app'}
+# or, to map host folders to guest folders of the same name,
+# $shared_folders = Hash[*['/home/foo/app1', '/home/foo/app2'].map{|d| [d, d]}.flatten]
+#$shared_folders = {}
+
+# Enable port forwarding from guest(s) to host machine, syntax is: { 80 => 8080 }, auto correction is enabled by default.
+$forwarded_ports = {}
