@@ -64,8 +64,8 @@ RUN git clone `head -n 2 $NUPIC/.nupic_modules | tail -n 1 | sed -r "s/NUPIC_COR
     cd nupic.core && \
     git reset --hard `head -n 3 $NUPIC/.nupic_modules | tail -n 1 | sed -r "s/NUPIC_CORE_COMMITISH = '(.+)'/\\1/"`
 
-# Install Python dependencies
-RUN pip install --allow-all-external --allow-unverified PIL --allow-unverified  psutil -r $NUPIC/external/common/requirements.txt
+# Install nupic.core Python dependencies
+RUN pip install -r nupic.core/bindings/py/requirements.txt
 
 # Build nupic.core
 RUN cd nupic.core && \
@@ -74,7 +74,15 @@ RUN cd nupic.core && \
     cmake ../../src -DCMAKE_INSTALL_PREFIX=/usr/local && \
     make install
 
+WORKDIR /usr/local/src/nupic.core
+
+# Build and install nupic.bindings
+RUN NUPIC_CORE_RELEASE=/usr/local python setup.py develop
+
 WORKDIR /usr/local/src/nupic
+
+# Install nupic  Python dependencies
+RUN pip install --allow-all-external --allow-unverified PIL --allow-unverified  psutil -r $NUPIC/external/common/requirements.txt
 
 # Build release packages
 RUN python setup.py sdist bdist bdist_wheel
