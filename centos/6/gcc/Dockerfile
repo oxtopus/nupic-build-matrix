@@ -77,12 +77,12 @@ RUN cd nupic.core && \
 WORKDIR /usr/local/src/nupic.core
 
 # Build and install nupic.bindings
-RUN NUPIC_CORE_RELEASE=/usr/local python setup.py develop
+RUN NUPIC_CORE_RELEASE=/usr/local python setup.py bdist_wheel
 
 WORKDIR /usr/local/src/nupic
 
 # Install nupic  Python dependencies
-RUN pip install --allow-all-external --allow-unverified PIL --allow-unverified  psutil -r $NUPIC/external/common/requirements.txt
+RUN pip install --find-links /usr/local/src/nupic.core/bindings/py/dist --allow-all-external --allow-unverified PIL --allow-unverified  psutil -r $NUPIC/external/common/requirements.txt
 
 # Build release packages
 RUN python setup.py sdist bdist bdist_wheel
