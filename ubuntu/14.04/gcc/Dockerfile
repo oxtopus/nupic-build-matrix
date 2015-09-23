@@ -35,31 +35,32 @@ ENV USER docker
 # Copy context into container file system
 ADD nupic/ $NUPIC
 
+# Install capnproto
+RUN wget https://capnproto.org/capnproto-c++-0.5.2.tar.gz && \
+    tar zxf capnproto-c++-0.5.2.tar.gz && \
+    cd capnproto-c++-0.5.2 && \
+    ./configure && \
+    make check && \
+    make install
+
 # Clone nupic.core
 RUN git clone `head -n 2 $NUPIC/.nupic_modules | tail -n 1 | sed -r "s/NUPIC_CORE_REMOTE = '(.+)'/\\1/"` && \
     cd nupic.core && \
     git reset --hard `head -n 3 $NUPIC/.nupic_modules | tail -n 1 | sed -r "s/NUPIC_CORE_COMMITISH = '(.+)'/\\1/"`
 
-WORKDIR /nupic.core
-
-# Install nupic.core Python dependencies
-RUN pip install -r bindings/py/requirements.txt
-
 # Build nupic.core
-RUN mkdir -p build/scripts && \
+RUN cd nupic.core && \
+    pip install -r bindings/py/requirements.txt && \
+    mkdir -p build/scripts && \
     cd build/scripts && \
     cmake ../../src -DCMAKE_INSTALL_PREFIX=/usr/local && \
-    make install
-
-# Build and install nupic.bindings
-RUN NUPIC_CORE_RELEASE=/usr/local python setup.py bdist_wheel
+    make install && \
+    cd ../../bindings/py && \
+    python setup.py install --nupic-core-dir=/usr/local
 
 WORKDIR /usr/local/src/nupic
 
-# Install nupic Python dependencies
-RUN pip install --find-links /nupic.core/bindings/py/dist --allow-all-external --allow-unverified PIL --allow-unverified  psutil -r external/common/requirements.txt
-
 # Build release packages
-RUN python setup.py sdist bdist bdist_wheel
+RUN python setup.py sdist bdist bdist_wheel bdist_egg
 
 WORKDIR /home/docker
